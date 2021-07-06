@@ -40,28 +40,18 @@ def erase(n: int,rstr=False) -> str:
     prnt = lambda a: print(a) if not rstr else lambda a: a
     return prnt(constant.STARTSEQ + str(n) + 'X')
 
-def moveup_and_left(rstr=False) -> int:
+def moveup_and_left(rstr=False) -> str:
     prnt = lambda a: print(a) if not rstr else lambda a: a
     return prnt(constant.STARTSEQ + '1A' + constant.STARTSEQ + '1D')
 
-def move_up_and_left(up: int,left: int,rstr=False) -> int:
+def move_up_and_left(up: int,left: int,rstr=False) -> str:
     prnt = lambda a: print(a) if not rstr else lambda a: a
     return prnt(constant.STARTSEQ + str(up) + 'A' + constant.STARTSEQ + str(left) + 'D')
 
-#def move_down_and_left(Bool $rstr=False) {
-#    my $print = ($rstr == False) ?? &printf !! &sprintf;
-#    return $print(STARTSEQ ~ "1B" ~ STARTSEQ ~ "1D");
-#}
-#
-#multi move_down_and_left(Int $down,Int $left,Bool $rstr=False){
-#    my $print = ($rstr == False) ?? &printf !! &sprintf;
-#    return $print( STARTSEQ ~ "%dB" ~ STARTSEQ ~ "%dD",$down,$left);
-#}
-#
-#sub print_the_string( Str $s ) {
-#     print $s;
-#}
-#sub return_the_string(Str $s ) {
-#    return $s;
-#} 
+def movedown_and_left(rstr=False) -> str:
+    prnt = lambda a: print(a) if not rstr else lambda a: a
+    return prnt(constant.STARTSEQ + '1B' + constant.STARTSEQ + '1D')
 
+def move_down_and_left(down: int,left: int,rstr=False) -> str:
+    prnt = lambda a: print(a) if not rstr else lambda a: a
+    return prnt(constant.STARTSEQ + str(down) + 'B' + constant.STARTSEQ + str(left) + 'D')
