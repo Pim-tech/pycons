@@ -3,6 +3,9 @@ from lib.Colors import *
 
 
 c = Color()
+mavar = c.sequence8(LRED+BBLUE,True)
+print(mavar+'CECI EST LE TEXTE')
+c._()
 c.sequence8(BROWN);
 print("BROWN");
 c._()

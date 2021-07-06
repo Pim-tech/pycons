@@ -82,7 +82,7 @@ class Color:
         self.format = None
 
     def sequence8(self,attr: int, rstr=False, mode=None) -> str:
-        prnt = lambda a: print(a,end='') if not rstr else lambda a: a
+        prnt=(lambda a: a) if rstr else (lambda a: print(a,end=''))
         color = attr & DRKCOLMSK
         is_licolor = bool(( attr & LICOLMSK) >> 3)
         bgcolor = (attr & DRKBGMSK) >> 4
@@ -130,6 +130,7 @@ class Color:
         return
 
     def print_256bf():
+        return
 
     def say256c():
         return
@@ -138,7 +139,7 @@ class Color:
         return
 
     def _(self,rstr = False) -> str:
-        prnt = lambda a: print(a,end='') if not rstr else lambda a: a
+        prnt=(lambda a: a) if rstr else (lambda a: print(a,end=''))
         self.current_li = False;
         return prnt(chr(27) + "[0m")
 
