@@ -111,32 +111,76 @@ class Color:
         if mode is not None:
             self.current_mode = mode
         seqstr = constant.STARTSEQ + ';'.join(seq) + 'm'
-        #seqstr = '[' + ';'.join(seq) + 'm'
         return prnt(seqstr)
+
+    def fixed_width(self,chaine,width=0,seek=0):
+        if seek > 0:
+            chaine = (seek * ' ') + chaine
+        if width > 0:
+            if len(chaine) > width:
+                return chaine[0:width]
+            if len(chaine) < width:
+                return chaine + ( ' ' * (width - len(chaine)))
+        return chaine
     
-    def sequence256():
-        return
+    def sequence256bf(self,color: int,bgcolor: int,rstr=False):
+        seq = []
+        prnt=(lambda a: a) if rstr else (lambda a: print(a,end=''))
+        if color != self.current_color_256:
+            seq.extend(['38','5',str(color)])
+        if bgcolor != self.current_bgcolor_256:
+            seq.extend(['48','5',str(bgcolor)])
+        self.current_color_256 = color
+        self.current_bgcolor_256 = bgcolor
+        seqstr = constant.STARTSEQ + ';'.join(seq) + 'm'
+        return prnt(seqstr)
 
-    def sequence_256():
-        return
+    def sequence256c(self,attr: int,rstr=False):
+        color = attr & COLOR_256_MASQ
+        bgcolor = (attr & BGND_256_MASQ) >> 8
+        return self.sequence256bf(color,bgcolor,rstr)
 
-    def print():
-        return
-
-    def say():
-        return
+    def print(self,s,attr,mode=None,rstr=False,reset=True,fixed_width=0,spacing=0):
+        prnt=(lambda a: a) if rstr else (lambda a: print(a,end=''))
+        chaine = self.sequence8(attr,True,mode)
+        chaine = (chaine + self.fixed_width(s,fixed_width,spacing)) if (fixed_width > 0) or (spacing > 0) else s
+        if reset:
+            chaine = (chaine + self._(True))
+        return prnt(chaine)
     
-    def print256c():
-        return
+    def print256c(self,s,color,rstr=False,reset=True,fixed_width=0,spacing=0):
+        prnt=(lambda a: a) if rstr else (lambda a: print(a,end=''))
+        chaine = self.sequence256c(color,True)
+        chaine = (chaine + self.fixed_width(s,fixed_width,spacing)) if (fixed_width > 0) or (spacing > 0) else s
+        if reset:
+            chaine = (chaine + self._(True))
+        return prnt(chaine)
 
-    def print_256bf():
-        return
 
-    def say256c():
-        return
+    def print256bf(self,s,fg: int,bg: int,rstr=False,reset=True,fixed_width=0,spacing=0):
+        prnt=(lambda a: a) if rstr else (lambda a: print(a,end=''))
+        chaine = self.sequence256bf(fg,bg,True)
+        chaine = (chaine + self.fixed_width(s,fixed_width,spacing)) if (fixed_width > 0) or (spacing > 0) else s
+        if reset:
+            chaine = (chaine + self._(True))
+        return prnt(chaine)
 
-    def say256bf():
-        return
+    def say(self,s,attr,rstr=False,reset=True,fixed_width=0,spacing=0,mode=None):
+        prnt=(lambda a: a) if rstr else (lambda a: print(a,end=''))
+        chaine = self.print(s,attr,mode,True,reset,fixed_width,spacing) + "\n"
+        return prnt(chaine)
+    
+    def say256c(self,s,attr,rstr=False,reset=True,fixed_width=0,spacing=0,mode=None):
+        prnt=(lambda a: a) if rstr else (lambda a: print(a,end=''))
+        chaine = self.print256c(s,attr,True,reset,fixed_width,spacing) + "\n"
+        return prnt(chaine)
+
+
+    def say256bf(self,s,fg: int,bg: int,rstr=False,reset=True,fixed_width=0,spacing=0):
+        prnt=(lambda a: a) if rstr else (lambda a: print(a,end=''))
+        chaine = self.print256bf(s,fg,bg,True,reset,fixed_width,spacing) + "\n"
+        return prnt(chaine)
+    
 
     def _(self,rstr = False) -> str:
         prnt=(lambda a: a) if rstr else (lambda a: print(a,end=''))
