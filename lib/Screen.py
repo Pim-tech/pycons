@@ -13,9 +13,28 @@ CLOSED    = 0b0000000100000000
 FLAGMASK  = 0b1111111111111111
 
 class Point:
+    #x and y may be given these way:
+    # Point(1,2)
+    # t = (1,2)
+    # Point(t)
+    # literal tuple:
+    # Point((1,2))
+    # or in named parameters:
+    # Point(x=1,y=2)
+    # Additionnal parameter flagconst is falcultative
+    # Point(1,2,'CLOSED')
+    # or :
+    # Point(1,2 flagconst = 'CLOSED')
     def __init__(self,*args,**kws):
+
         self.flags = 0
-        self.setflag = ''
+        self.flagconst = ''
+        self.prev = None
+        self.next = None
+        self.rect = None
+        self.mis  = None
+        self.direction = None
+
         try:
             for n in range(0,len(args)):
                 if isinstance(args[n], tuple):
@@ -39,7 +58,7 @@ class Point:
                         raise ValueError('x and y must be int.')
                 elif n == 2:
                     if isinstance(args[2],str):
-                        self.setflag = args[2]
+                        self.flagconst = args[2]
                     else:
                         raise ValueError('Third parameter setflag must be typed str.')
                 elif n > 2:
@@ -54,9 +73,9 @@ class Point:
                             self.y = kws['y']
                     else:
                         raise ValueError('Positionals x and y must be int.')
-                elif name == 'setflag':
+                elif name == 'flagconst':
                     if isinstance(kws[name],str):
-                        self.setflag = kws[name]
+                        self.flagconst = kws[name]
                     else:
                         raise ValueError('setflag must be of type str.')
                 else:
@@ -65,8 +84,11 @@ class Point:
         except ValueError as v:
             exit(str(v))
 
-    def setflag(self,flag: str):
-        self.flags = eval('self.flags | ' + flag )
+        if self.flagconst:
+            self.setflag(self.flagconst)
+
+    def setflag(self,flag):
+        self.flags = eval('self.flags | ' + flag)
         if flag == 'CONVEXE':
             self.flags = self.flags & ( CONCAVE ^ FLAGMASK)
         if flag == 'CONCAVE':
@@ -74,22 +96,25 @@ class Point:
         if flag == 'LINE':
             self.flags = self.flags & (CONCAVE ^ FLAGMASK)
             self.flags = self.flags & (CONVEXE ^ FLAGMASK)
+        return self.flags
 
-    def unsetflag(flag: str):
+    def unsetflag(self,flag: str):
         self.flags = eval('self.flags & (' + flag + ' ^ FLAGMASK )' )
+        return self.flags
 
     def hasflag(flag: str):
         return eval('(self.flags & ' + flag + ')')
 
     def show(self):
         print('x:',self.x,'y:',self.y)
-        if self.setflag:
-            print('setflag:',self.setflag)
-
+        if self.flagconst:
+            print('flagconst:',self.flagconst)
+        if self.flags:
+            print('flags:',self.flags)
 
     def tostr():
         return 'x: ' + str(self.x) + ', y: ' + str(self.y)
 
-    def fix():
+    def fix(self):
         gotoxy(self.x,self.y)
 
