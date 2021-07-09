@@ -12,7 +12,11 @@ p4.show()
 p.show()
 p.setflag('LINE')
 n = p.unsetflag('CLOSED')
-p.show()
+print(p.hasflag('LINE'))
+print(p.hasflag('CLOSED'))
+
+#p.show()
+
 
 
 

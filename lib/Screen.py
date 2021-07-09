@@ -17,7 +17,7 @@ class Point:
     # Point(1,2)
     # t = (1,2)
     # Point(t)
-    # literal tuple:
+    # or the tuple may be a literal tuple:
     # Point((1,2))
     # or in named parameters:
     # Point(x=1,y=2)
@@ -25,6 +25,10 @@ class Point:
     # Point(1,2,'CLOSED')
     # or :
     # Point(1,2 flagconst = 'CLOSED')
+    # also:
+    # Point(x = 1, y = 2, flagconst = 'CLOSED')
+    # Since you give a named parameter all the one that follow must be named too
+    #
     def __init__(self,*args,**kws):
 
         self.flags = 0
@@ -86,7 +90,8 @@ class Point:
 
         if self.flagconst:
             self.setflag(self.flagconst)
-
+    
+    #Rise a flag
     def setflag(self,flag):
         self.flags = eval('self.flags | ' + flag)
         if flag == 'CONVEXE':
@@ -98,13 +103,16 @@ class Point:
             self.flags = self.flags & (CONVEXE ^ FLAGMASK)
         return self.flags
 
+    #disable a flag
     def unsetflag(self,flag: str):
         self.flags = eval('self.flags & (' + flag + ' ^ FLAGMASK )' )
         return self.flags
 
-    def hasflag(flag: str):
-        return eval('(self.flags & ' + flag + ')')
+    #Return is True if flag is enabled otherwise False
+    def hasflag(self,flag: str):
+        return bool(eval('(self.flags & ' + flag + ')'))
 
+    #Show flags and the last flagconst status
     def show(self):
         print('x:',self.x,'y:',self.y)
         if self.flagconst:
@@ -112,9 +120,102 @@ class Point:
         if self.flags:
             print('flags:',self.flags)
 
+    #Return a string of x and y current coordinates
     def tostr():
         return 'x: ' + str(self.x) + ', y: ' + str(self.y)
 
+    #move the cursor point to its x and y position
     def fix(self):
         gotoxy(self.x,self.y)
+
+class ScreenBuffer:
+
+    def __init__(self):
+        self.buffer = []
+        self.xy     = []
+        self.yx     = []
+
+    def make_indices(self):
+        self.xy     = []
+        self.yx     = []
+
+#        for tx in range(0,len(self.buffer)):
+#            if self.buffer[tx]:
+#                ally = self.buffer[tx]
+
+        return
+    def __setbuffer(self,x,y,value):
+        for n in range(x):
+            if len(self.buffer) <= n:
+                self.buffer.append([]);
+        for k in range(y):
+            if len(self.buffer[n]) <= k:
+                self.buffer[n].append(None)
+        self.buffer[n][k]=value
+
+    def load_value(self,*args,**kws): 
+        x = None
+        y = None
+        p = None
+        inext = 0
+        value = None
+        push = False
+        try:
+            if len(args) and isinstance(args[0],Point):
+                p = args[0]
+                inext +=  1
+                x,y = p.x,p.y 
+            elif len(args) and isinstance(args[0],int):
+                x = args[0]
+                inext += 1
+                if len(args) > 1 and isinstance(args[1],int):
+                    y =args[1]
+                    inext += 1
+            if len(args) > inext:
+                value = args[inext]
+
+            for name in kws:
+                if name == 'x' or name == 'y':
+                    if isinstance(kws[name],int):
+                        if name == 'x':
+                            x = kws['x']
+                        elif name == 'y':
+                            y = kws['y']
+                    else:
+                        raise ValueError('Positionals x and y must be int.')
+                elif name == 'pt' or name == 'p':
+                    p = kws[name] 
+                    x,y =p.x,p.y
+                elif name == 'value':
+                    value = kws[name] #we cannot control type here
+
+        except ValueError as v:
+            exit(str(v))
+
+        if p is None:
+            p = Point(x,y)
+
+        if value is None:
+            self.__setbuffer(x,y,p)
+        else:
+            self.__setbuffer(x,y,value)
+        
+
+    def get_value(self,x: int,y: int):
+        return self.buffer[x - 1, y - 1] 
+
+    def for_xrange_aty(self):
+        return 
+
+    def for_yrange_atx(self):
+        return
+
+    def get_xy(self,x: int) -> int:
+        return self.xy[x - 1]
+
+    def get_yx(self,y: int) -> int:
+        return self.yx[y - 1]
+            
+    def showbuf(self):
+        print('buffer:',self.buffer)
 
