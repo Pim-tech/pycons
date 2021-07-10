@@ -87,6 +87,10 @@ class Point:
 
         except ValueError as v:
             exit(str(v))
+        except IndexError as ie:
+            exit(str(ie))
+        except:
+            exit('An exception occured.')
 
         if self.flagconst:
             self.setflag(self.flagconst)
@@ -138,22 +142,31 @@ class ScreenBuffer:
     def make_indices(self):
         self.xy     = []
         self.yx     = []
+        for tx in range(len(self.buffer)):
+            if self.buffer[tx] is not None:
+                for ty in range(len(self.buffer[tx])):
+                    if self.buffer[tx][ty] is not None:
+                        self.__setbuffer(self.xy,tx,ty)
+                        self.__setbuffer(self.yx,ty,tx)
 
-#        for tx in range(0,len(self.buffer)):
-#            if self.buffer[tx]:
-#                ally = self.buffer[tx]
+    def __setbuffer(self,thebuffer,a,value):
+        for i in range(a+1):
+            if len(thebuffer) <= i:
+                thebuffer.append('')
+        thebuffer[i] = value
 
-        return
-    def __setbuffer(self,x,y,value):
+    def __set2dbuffer(self,x,y,value,thebuffer = None):
+        if thebuffer is None:
+            thebuffer = self.buffer
         for n in range(x):
-            if len(self.buffer) <= n:
-                self.buffer.append([]);
+            if len(thebuffer) <= n:
+                thebuffer.append([]);
         for k in range(y):
-            if len(self.buffer[n]) <= k:
-                self.buffer[n].append(None)
-        self.buffer[n][k]=value
+            if len(thebuffer[n]) <= k:
+                thebuffer[n].append(None)
+        thebuffer[n][k]=value
 
-    def load_value(self,*args,**kws): 
+    def load_value(self,*args,**kws) -> bool: 
         x = None
         y = None
         p = None
@@ -174,6 +187,7 @@ class ScreenBuffer:
             if len(args) > inext:
                 value = args[inext]
 
+
             for name in kws:
                 if name == 'x' or name == 'y':
                     if isinstance(kws[name],int):
@@ -189,33 +203,56 @@ class ScreenBuffer:
                 elif name == 'value':
                     value = kws[name] #we cannot control type here
 
+        except IndexError as ie:
+            exit(str(ie))
         except ValueError as v:
             exit(str(v))
+        except:
+            exit("Unexpected error:")
 
         if p is None:
             p = Point(x,y)
 
         if value is None:
-            self.__setbuffer(x,y,p)
+            self.__set2dbuffer(x,y,p)
         else:
-            self.__setbuffer(x,y,value)
+            self.__set2dbuffer(x,y,value)
+
+        return True
         
 
     def get_value(self,x: int,y: int):
-        return self.buffer[x - 1, y - 1] 
+        if not len(self.buffer) >= x or not len(self.buffer[x - 1]) >= y :
+            return None
+        return self.buffer[x - 1][ y - 1] 
 
-    def for_xrange_aty(self):
-        return 
+    def for_xrange_aty(self,y: int,x1: int,x2 = None,sens = 1):
+
+        try:
+            yindices = self.yx[y - 1]
+            nextindice = yindices.index(x - 1) + sens
+            xnextindice = yindices[nextindice]
+            if x2 is not None:
+                if self.buffer[xnextindice][y - 1] is not None and (x2 - 1) > xnextindice:
+                    return self.buffer[xnextindice][y - 1]
+                else:
+                    return None
+            else:
+                if self.buffer[xnextindice][y - 1] is not None:
+                    return self.buffer[xnextindice][y - 1]
+                else:
+                    return None
+        except IndexError as ie:
+            exit(str(ie))
+        except ValueError as v:
+            exit(str(v))
+        except:
+            exit("Unexpected error")
 
     def for_yrange_atx(self):
+         
         return
 
-    def get_xy(self,x: int) -> int:
-        return self.xy[x - 1]
-
-    def get_yx(self,y: int) -> int:
-        return self.yx[y - 1]
-            
     def showbuf(self):
         print('buffer:',self.buffer)
 

@@ -23,4 +23,6 @@ for a in range(0,255):
     c.sequence256bf(7,a)
     print('COULEUR DE FOND')
 
+c._()
+
 
