@@ -152,7 +152,7 @@ class ScreenBuffer:
     def __setbuffer(self,thebuffer,a,value):
         for i in range(a+1):
             if len(thebuffer) <= i:
-                thebuffer.append('')
+                thebuffer.append(None)
         thebuffer[i] = value
 
     def __set2dbuffer(self,x,y,value,thebuffer = None):
@@ -227,7 +227,6 @@ class ScreenBuffer:
         return self.buffer[x - 1][ y - 1] 
 
     def for_xrange_aty(self,y: int,x1: int,x2 = None,sens = 1):
-
         try:
             yindices = self.yx[y - 1]
             nextindice = yindices.index(x - 1) + sens
@@ -250,8 +249,23 @@ class ScreenBuffer:
             exit("Unexpected error")
 
     def for_yrange_atx(self):
+        try:
+            xpoints = self.buffer[x - 1]
+            nextone = self.xy[x - 1].index(y - 1) + 1
+            next_indice = self.xy[nextone]
+            if y2 is not None:
+                if ypoints[next_indice] and (y2 - 1) > next_indice:
+                    return ypoints[next_indice]
+                return None;
+            if ypoints[next_indice] is not None:
+                return ypoints[next_indice]
+        except IndexError as ie:
+            exit(str(ie))
+        except ValueError as v:
+            exit(str(v))
+        except:
+            exit('Unexpected Error.')
          
-        return
 
     def showbuf(self):
         print('buffer:',self.buffer)

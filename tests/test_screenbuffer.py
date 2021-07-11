@@ -15,6 +15,5 @@ scrn.showbuf()
 
 x = scrn.get_value(1,1)
 
-print('x:',x)
 
 scrn.make_indices()
