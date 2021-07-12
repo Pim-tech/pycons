@@ -4,6 +4,18 @@ from lib.Colors import *
 from lib.Screen import *
 import sys
 
+
+HLINE = 0
+VLINE = 1
+UPLEFT = 2
+UPRIGHT = 3
+DWNLEFT = 4
+DWNRIGHT = 5
+
+SIMPLE = 1
+DOUBLE = 2
+HEAVY  = 3
+
 class Border:
     def __init__(self):
         self.motif = 'x'
@@ -14,6 +26,7 @@ class Rectangle:
         self.motif = '*'
         self.color = WHITE+BBLACK
         self.has_border = False
+        self.hasbox = False
         self.border_motif = '+'
         self.border_color = WHITE+BBLACK
         self.box = 0
@@ -129,11 +142,16 @@ class Rectangle:
                 elif name == 'box':
                     if not isinstance(kws[name],int):
                         raise TypeError("box must be an integer.")
-                    if self.border_motif != '+':
-                        raise ValueError('You may not have border_motif with boxes.')
-                    self.box = kws[name]
+                    self.hasbox = True
+                    self.box = kws[name] - 1
                 else:
                     raise ValueError("unknow named parameter: '" + name + "' given.")
+
+            if self.hasbox:
+                self.has_border = False
+                if self.border_motif != '+':
+                    raise ValueError('You may not have border_motif with boxes.')
+
         except TypeError as te:
             exc_type, exc_obj, tb = sys.exc_info()
             f = tb.tb_frame
@@ -150,7 +168,7 @@ class Rectangle:
             string = 'Unknown Exception occured in {} at line {}: ' .format(f.f_code.co_filename,tb.tb_lineno,exc_obj)
             exit(string)
 
-    def show(self):
+    def properties(self):
         print('xpos:',self.xpos)
         print('ypos:',self.ypos)
         print('hlen:',self.hlen)
@@ -161,17 +179,48 @@ class Rectangle:
         if self.has_border:
             print('border_motif:',self.border_motif)
             print('border_color:',self.border_color)
+
     def draw(self):
         gotoxy(self.xpos ,self.ypos )
 
         xpos,ypos,hlen,vlen = self.xpos,self.ypos,self.hlen,self.vlen
         c,b_color,s = None,None,None
-        if self.has_border or self.box > 0:
-            c = Colors()
+        if self.has_border or self.hasbox:
+            c = Color()
             b_color = c.sequence8(self.border_color,rstr = True)
+
         if self.has_border:
             h_border = self.border_motif * self.hlen
-            v_border_right = (move_down_and_left(True) + self.border_motif) * (self.vlen - 1)
-            v_border_left  = (self.border_motif + move_down_and_left(True) ) * (self.vlen - 1)
+            v_border_right = (movedown_and_left(True) + self.border_motif) * (self.vlen - 1)
+            v_border_left  = (self.border_motif + movedown_and_left(True) ) * (self.vlen - 1)
             s = (b_color + h_border + v_border_right + gotoxy(self.xpos,self.ypos,True) + v_border_left + h_border + c._(True))
-        elif self.box > 0:
+        elif self.hasbox:
+            h_border_top = self.boxes[self.box][UPLEFT] + self.boxes[self.box][HLINE] * (self.hlen - 2 ) + self.boxes[self.box][UPRIGHT]
+            h_border_bottom = self.boxes[self.box][DWNLEFT] + self.boxes[self.box][HLINE] * (self.hlen - 2) + self.boxes[self.box][DWNRIGHT]
+            v_border_right = (movedown_and_left(True) + self.boxes[self.box][VLINE]) * (self.vlen - 2)
+            v_border_left = (self.boxes[self.box][VLINE] + movedown_and_left(True)) * (self.vlen - 2)
+            s = (b_color + h_border_top + v_border_right + gotoxy(self.xpos,self.ypos + 1,True) + v_border_left + h_border_bottom + c._(True))
+
+        if self.has_border or self.hasbox :
+            print(s)
+            gotoxy(self.xpos + 1, self.ypos + 1)
+            hlen -= 2
+            vlen -= 2
+            xpos += 1
+            ypos += 1
+
+        line = self.motif * hlen
+        bc = Color()
+        bc_color = bc.sequence8(self.color,True)
+        bloc = bc_color + line
+        for n in range(1,vlen):
+            bloc += (gotoxy(xpos,ypos + n,True) + line)
+        bloc += bc._(True)
+        print(bloc)
+
+    def hide(self):
+        return
+
+    def show():
+        return
+
