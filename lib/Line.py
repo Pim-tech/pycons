@@ -5,10 +5,20 @@ import sys
 
 class Line:
 
+    #You may give points:
+    #Line(a = Point(a),b = Point(b),[motif = 'x'])
+    #or
+    #Line(Point(a),Point(b),[motif='x'])
+    
+    #You may give tuples: like this
+    #Line(ia = (x1,y1),ib = (x2,y2))
+    #or
+    #Line((x1,y1),(x2,y2),[motif ='x'] )
+    #
     def __init__(slef,*args,**kws):
         self.a = None
         self.b = None
-        self.motif = None
+        self.motif = '*' 
         self.direction= None
         self.origin = None
         self.destination = None
@@ -50,10 +60,6 @@ class Line:
                     if not isinstance(kws[name],Point):
                         raise TypeError("b must be a Point.")
                     self.a = kws[name]
-               elif name == 'direction':
-                    if not isinstance(kws[name],str):
-                        raise TypeError('direction must be an str.')
-                    self.direction = kws[name]
                elif name == 'prec':
                     if not isinstance(kws[name],Line):
                         raise TypeError('prec must be a Line object.')
@@ -90,6 +96,8 @@ class Line:
             f = tb.tb_frame
             string = 'Unknown Exception occured in {} at line {}: ' .format(f.f_code.co_filename,tb.tb_lineno,exc_obj)
             exit(string)
+
+        
 
     def get_coords(self):
         return
