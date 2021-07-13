@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
-ar = ['a','b','c']
+a=None;
 
-a,b,c = ar
+b = ''
 
-print('a:',a,'b:',b,'c:',c)
 
+b = a
+
+a = 'interview' 
+
+print('b:',b)

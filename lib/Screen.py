@@ -1,5 +1,6 @@
 
 from lib.Misc import *
+import sys
 
 LINE      = 0b0000000000000001
 CONCAVE   = 0b0000000000000010
@@ -86,11 +87,20 @@ class Point:
                     raise ValueError("unknown named parameter '" + name + "'")
 
         except ValueError as v:
-            exit(str(v))
+            exc_type, exc_obj, tb = sys.exc_info()
+            f = tb.tb_frame
+            string = 'Exception occured in {} at line {}: ' .format(f.f_code.co_filename,tb.tb_lineno,exc_obj)
+            exit(string + str(v))
         except IndexError as ie:
-            exit(str(ie))
+            exc_type, exc_obj, tb = sys.exc_info()
+            f = tb.tb_frame
+            string = 'Exception occured in {} at line {}: ' .format(f.f_code.co_filename,tb.tb_lineno,exc_obj)
+            exit(string + str(ie))
         except:
-            exit('An exception occured.')
+            exc_type, exc_obj, tb = sys.exc_info()
+            f = tb.tb_frame
+            string = 'Unknown exception occured in {} at line {}: ' .format(f.f_code.co_filename,tb.tb_lineno,exc_obj)
+            exit(string)
 
         if self.flagconst:
             self.setflag(self.flagconst)
@@ -204,11 +214,20 @@ class ScreenBuffer:
                     value = kws[name] #we cannot control type here
 
         except IndexError as ie:
-            exit(str(ie))
+            exc_type, exc_obj, tb = sys.exc_info()
+            f = tb.tb_frame
+            string = 'Exception occured in {} at line {}: ' .format(f.f_code.co_filename,tb.tb_lineno,exc_obj)
+            exit(string + str(ie))
         except ValueError as v:
-            exit(str(v))
+            exc_type, exc_obj, tb = sys.exc_info()
+            f = tb.tb_frame
+            string = 'Exception occured in {} at line {}: ' .format(f.f_code.co_filename,tb.tb_lineno,exc_obj)
+            exit(string + str(v))
         except:
-            exit("Unexpected error:")
+            exc_type, exc_obj, tb = sys.exc_info()
+            f = tb.tb_frame
+            string = 'Exception occured in {} at line {}: ' .format(f.f_code.co_filename,tb.tb_lineno,exc_obj)
+            exit(string)
 
         if p is None:
             p = Point(x,y)
