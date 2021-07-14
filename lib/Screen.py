@@ -87,20 +87,11 @@ class Point:
                     raise ValueError("unknown named parameter '" + name + "'")
 
         except ValueError as v:
-            exc_type, exc_obj, tb = sys.exc_info()
-            f = tb.tb_frame
-            string = 'Exception occured in {} at line {}: ' .format(f.f_code.co_filename,tb.tb_lineno,exc_obj)
-            exit(string + str(v))
+            raise
         except IndexError as ie:
-            exc_type, exc_obj, tb = sys.exc_info()
-            f = tb.tb_frame
-            string = 'Exception occured in {} at line {}: ' .format(f.f_code.co_filename,tb.tb_lineno,exc_obj)
-            exit(string + str(ie))
+            raise
         except:
-            exc_type, exc_obj, tb = sys.exc_info()
-            f = tb.tb_frame
-            string = 'Unknown exception occured in {} at line {}: ' .format(f.f_code.co_filename,tb.tb_lineno,exc_obj)
-            exit(string)
+            raise
 
         if self.flagconst:
             self.setflag(self.flagconst)

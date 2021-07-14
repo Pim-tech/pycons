@@ -153,20 +153,11 @@ class Rectangle:
                     raise ValueError('You may not have border_motif with boxes.')
 
         except TypeError as te:
-            exc_type, exc_obj, tb = sys.exc_info()
-            f = tb.tb_frame
-            string = 'Exception occured in {} at line {}: ' .format(f.f_code.co_filename,tb.tb_lineno,exc_obj)
-            exit(string + str(te))
+            raise
         except ValueError as ve:
-            exc_type, exc_obj, tb = sys.exc_info()
-            f = tb.tb_frame
-            string = 'Exception occured in {} at line {}:' .format(f.f_code.co_filename,tb.tb_lineno,exc_obj)
-            exit(string + str(ve))
+            raise
         except:
-            exc_type, exc_obj, tb = sys.exc_info()
-            f = tb.tb_frame
-            string = 'Unknown Exception occured in {} at line {}: ' .format(f.f_code.co_filename,tb.tb_lineno,exc_obj)
-            exit(string)
+            raise
 
     def properties(self):
         print('xpos:',self.xpos)
