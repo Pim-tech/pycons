@@ -23,14 +23,14 @@ def r_sub():
     print("This is r_sub.")
 
 
-evts = { 'KEY_PGUP' : on_activate_page_up,
-    'KEY_PGDOWN': on_activate_page_down,
+evts = { '<page_up>' : on_activate_page_up,
+    '<page_down>': on_activate_page_down,
     'a'        : on_activate_letter_a,
-    'r'        : r_sub,
-    'KEY_F8'       : r6.draw
+    'r'        : r_sub
     }
 
 e = Events(evts)
+
 #e.add_event('R',r6,'draw')
 
 
