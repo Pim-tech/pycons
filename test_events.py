@@ -30,7 +30,7 @@ evts = { 'KEY_PGUP' : on_activate_page_up,
     'KEY_F8'       : r6.draw
     }
 
-e = Events(evts)
+e = KbEvents(evts,threads = True)
 #e.add_event('R',r6,'draw')
 
 

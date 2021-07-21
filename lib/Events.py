@@ -4,12 +4,16 @@ import termios
 import contextlib
 from lib.keyboards.current import *
 
-class Events:
-    def __init__(self,events: dict,quit = 'Q',show_key = False):
+class KbEvents:
+    def __init__(self,events: dict,quit = 'Q',show_key = False,threads=False):
         self.e_dict = events
         self.key_exit = quit
         self.show_key = show_key
-        self.wait()
+        self.threads = threads 
+        if self.threads == False:
+            self.wait_key(None)
+        else:
+            self.run_threads()
 
     @contextlib.contextmanager
     def raw_mode(self,sfile):
@@ -25,7 +29,7 @@ class Events:
     def add_event(self):
         return
 
-    def get_key(self):
+    def _get_key(self):
         try:
             ch = sys.stdin.read(1)
             if not ch or ch == chr(4):
@@ -52,18 +56,55 @@ class Events:
         except (KeyboardInterrupt, EOFError):
             pass
 
-    def wait(self):
+    def wait_key(self,threadname,q):
         with self.raw_mode(sys.stdin):
-            ik = self.get_key() 
+            ik = self._get_key() 
             while ik:
                 if self.show_key:
                     print('You pressed:',ik)
                 if self.key_exit and ik == self.key_exit:
                     break
                 if ik in self.e_dict:
-                    sub = self.e_dict[ik]
-                    sub()
-                ik = self.get_key() 
+                    if self.threads == True:
+                        q.put(ik)
+                    else:
+                        sub = self.e_dict[ik]
+                        sub()
+                ik = self._get_key() 
 
-    def terminate(self):
-        sys.exit(0)
+    def dothejob(self,threadname, q):
+        from queue import Empty
+        from time import sleep
+        c = 0
+        while True:
+            sleep(0.1) #slow the loop down
+            c += 1
+            #print(c)
+            #Below is the changed part
+            ch = None
+            try:
+                ch = q.get(block=False)
+            except Empty:
+                pass
+            if ch is not None:
+                if self.show_key:
+                    print('Catched key:',ch)
+                if ch in self.e_dict:
+                    sub = self.e_dict[ch]
+                    sub()
+
+
+    def run_threads(self):
+        from threading import Thread
+        from queue import Queue
+        queue = Queue()
+        thread1 = Thread( target=self.wait_key,args=("Thread-1",queue) )
+        thread2 = Thread( target = self.dothejob,args=('Thread-2',queue) )
+
+        thread1.start()
+        thread2.start()
+        thread1.join()
+        thread2.join()
+
+
+
