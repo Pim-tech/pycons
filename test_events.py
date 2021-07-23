@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 #New python script generation
 
+import time
 from lib.Events import *
 from lib.Rectangle import *
 from lib.Colors import *
@@ -21,16 +22,19 @@ def quit_prg():
 
 def r_sub():
     print("This is r_sub.")
+    time.sleep(1000)
 
 
 evts = { 'KEY_PGUP' : on_activate_page_up,
     'KEY_PGDOWN': on_activate_page_down,
     'a'        : on_activate_letter_a,
     'r'        : r_sub,
-    'KEY_F8'       : r6.draw
+    'KEY_F8'       : r6.draw,
     }
+   
 
-e = KbEvents(evts,threads = True)
+e = KbEvents(evts,quit = 'KEY_F10',threads = True)
+#e = KbEvents(evts,quit = 'Q')
 #e.add_event('R',r6,'draw')
 
 

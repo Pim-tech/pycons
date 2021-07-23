@@ -1,4 +1,17 @@
 
+######################### WARNING #####################
+# Each array in this file MUST MAP each other.
+# For example : KEY_INSERT which is the
+# 9th key in function_key_strings array MUST be the
+# 9th corresponding key in function_keys array. 
+
+
+######################## Warning ######################
+# Also the special_key_string array index must be the int value
+# of the character. 
+# The first index 0 is not taken in account so the 1st special_key_string et at index 1 and so on
+#
+
 KEY_UP      =  1
 KEY_DOWN    =  2
 KEY_LEFT    =  3

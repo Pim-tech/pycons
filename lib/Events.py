@@ -1,31 +1,44 @@
 
 import sys
 import termios
+import signal
 import contextlib
+
+#This is the keyboard map, this could/will be customized later
 from lib.keyboards.current import *
 
 class KbEvents:
-    def __init__(self,events: dict,quit = 'Q',show_key = False,threads=False):
+    def __init__(self,events: dict,quit = '',show_key = False,threads=False):
         self.e_dict = events
         self.key_exit = quit
         self.show_key = show_key
-        self.threads = threads 
+        self.close_properly = False
+        self.threads = False
+        
+        if threads:
+            self.threads = threads 
+        
+        signal.signal(signal.SIGINT,self.signal_handler)
+
         if self.threads == False:
-            self.wait_key(None)
+            self.wait_key(None,None)
         else:
             self.run_threads()
 
+
     @contextlib.contextmanager
     def raw_mode(self,sfile):
-        old_attrs = termios.tcgetattr(sfile.fileno())
-        new_attrs = old_attrs[:]
+        self.sfile = sfile
+        self.old_attrs = termios.tcgetattr(self.sfile.fileno())
+        new_attrs = self.old_attrs[:]
         new_attrs[3] = new_attrs[3] & ~(termios.ECHO | termios.ICANON)
         try:
-            termios.tcsetattr(sfile.fileno(), termios.TCSADRAIN, new_attrs)
+            termios.tcsetattr(self.sfile.fileno(), termios.TCSADRAIN, new_attrs)
             yield
         finally:
-            termios.tcsetattr(sfile.fileno(), termios.TCSADRAIN, old_attrs)
+            termios.tcsetattr(self.sfile.fileno(), termios.TCSADRAIN, self.old_attrs)
 
+    #TODO: to add an event afterwords.
     def add_event(self):
         return
 
@@ -56,6 +69,12 @@ class KbEvents:
         except (KeyboardInterrupt, EOFError):
             pass
 
+    def signal_handler(self,sig, frame):
+        print('You pressed Ctrl+C!')
+        termios.tcsetattr(self.sfile.fileno(), termios.TCSADRAIN, self.old_attrs)
+        sys.exit(0)
+        
+
     def wait_key(self,threadname,q):
         with self.raw_mode(sys.stdin):
             ik = self._get_key() 
@@ -63,6 +82,8 @@ class KbEvents:
                 if self.show_key:
                     print('You pressed:',ik)
                 if self.key_exit and ik == self.key_exit:
+                    if self.threads == True:
+                        q.put('EXIT')
                     break
                 if ik in self.e_dict:
                     if self.threads == True:
@@ -71,24 +92,30 @@ class KbEvents:
                         sub = self.e_dict[ik]
                         sub()
                 ik = self._get_key() 
+                if ik is None:
+                    q.put('EXIT')
+                    break
+
 
     def dothejob(self,threadname, q):
         from queue import Empty
         from time import sleep
-        c = 0
+        #c = 0
+        self.q=q
         while True:
             sleep(0.1) #slow the loop down
-            c += 1
-            #print(c)
-            #Below is the changed part
             ch = None
             try:
                 ch = q.get(block=False)
             except Empty:
                 pass
+            except (KeyboardInterrupt):
+                pass
             if ch is not None:
                 if self.show_key:
                     print('Catched key:',ch)
+                if self.close_properly or ch == 'EXIT':
+                    break
                 if ch in self.e_dict:
                     sub = self.e_dict[ch]
                     sub()
@@ -98,13 +125,15 @@ class KbEvents:
         from threading import Thread
         from queue import Queue
         queue = Queue()
-        thread1 = Thread( target=self.wait_key,args=("Thread-1",queue) )
-        thread2 = Thread( target = self.dothejob,args=('Thread-2',queue) )
+        self.thread1 = Thread( target=self.wait_key,args=("WaitKey",queue) )
+        self.thread2 = Thread( target = self.dothejob,args=('JobTask',queue) )
 
-        thread1.start()
-        thread2.start()
-        thread1.join()
-        thread2.join()
+        self.thread2.daemon = True
+        self.thread1.daemon = True
+        self.thread1.start()
+        self.thread2.start()
+        self.thread1.join()
+        self.thread2.join()
 
 
 

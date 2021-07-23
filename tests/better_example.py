@@ -3,6 +3,7 @@
 import sys
 import termios
 import contextlib
+import select
 from lib.keyboards.current import *
 
 
@@ -35,17 +36,21 @@ with raw_mode(sys.stdin):
                 continue
             elif c == 0x1b:
                 s=''
-                while len(s) < 5:
+                while len(s) < 5 :
                     cc = sys.stdin.read(1)
                     if ord(cc) == 0x1b:
                         continue
                     s += cc 
                     if s in function_keys:
                         print('You hit key:',function_key_strings[function_keys[s] - 1])
-                        s=''
                         break
-                s=''
-                continue
+                
+                if len(s) == 0:
+                    print('ECHAP')
+                    s = 'ESC'
+                else:
+                    s=''
+                    continue
             print('You hit key:',ch)
     except (KeyboardInterrupt, EOFError):
         pass
