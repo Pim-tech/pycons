@@ -22,7 +22,6 @@ def quit_prg():
 
 def r_sub():
     print("This is r_sub.")
-    time.sleep(1000)
 
 
 evts = { 'KEY_PGUP' : on_activate_page_up,
@@ -33,7 +32,7 @@ evts = { 'KEY_PGUP' : on_activate_page_up,
     }
    
 
-e = KbEvents(evts,quit = 'KEY_F10',threads = True)
+e = KbEvents(evts,quit = 'KEY_F10',withthreads = True)
 #e = KbEvents(evts,quit = 'Q')
 #e.add_event('R',r6,'draw')
 

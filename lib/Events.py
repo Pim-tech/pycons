@@ -8,19 +8,20 @@ import contextlib
 from lib.keyboards.current import *
 
 class KbEvents:
-    def __init__(self,events: dict,quit = '',show_key = False,threads=False):
+    def __init__(self,events: dict,quit = '',show_key = False,withthreads=False):
         self.e_dict = events
         self.key_exit = quit
         self.show_key = show_key
         self.close_properly = False
-        self.threads = False
+        self.withthreads = False
+        self.treads = []
         
-        if threads:
-            self.threads = threads 
+        if withthreads:
+            self.withthreads = withthreads 
         
         signal.signal(signal.SIGINT,self.signal_handler)
 
-        if self.threads == False:
+        if self.withthreads == False:
             self.wait_key(None,None)
         else:
             self.run_threads()
@@ -82,11 +83,11 @@ class KbEvents:
                 if self.show_key:
                     print('You pressed:',ik)
                 if self.key_exit and ik == self.key_exit:
-                    if self.threads == True:
+                    if self.withthreads == True:
                         q.put('EXIT')
                     break
                 if ik in self.e_dict:
-                    if self.threads == True:
+                    if self.withthreads == True:
                         q.put(ik)
                     else:
                         sub = self.e_dict[ik]
@@ -111,6 +112,7 @@ class KbEvents:
                 pass
             except (KeyboardInterrupt):
                 pass
+            
             if ch is not None:
                 if self.show_key:
                     print('Catched key:',ch)
