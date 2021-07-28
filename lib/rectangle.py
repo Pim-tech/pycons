@@ -32,11 +32,10 @@ class Rectangle:
         self.box = 0
         self.points = []
         self.coords_color = []
-        self.hlen = None
-        self.vlen = None
-        self.a = None
-        self.b = None
+        self.hlen = self.vlen = None
+        self.a = self.b = None
         self.is_void = False
+        self.xpos = self.ypos = None
 
         self.boxes = [
         [
@@ -163,6 +162,12 @@ class Rectangle:
             raise
         except:
             raise
+        if self.xpos is None:
+            lines,cols = getTerminalSize() 
+            self.xpos = cols//2 - self.hlen//2
+        if  self.ypos is None:
+            lines,cols = getTerminalSize()
+            self.ypos  = lines//2 - self.vlen//2 
 
     def properties(self):
         print('xpos:',self.xpos)
@@ -175,6 +180,10 @@ class Rectangle:
         if self.has_border:
             print('border_motif:',self.border_motif)
             print('border_color:',self.border_color)
+
+    def getproperties():
+        pass
+
 
     def draw(self):
         gotoxy(self.xpos ,self.ypos )
@@ -219,6 +228,6 @@ class Rectangle:
     def hide(self):
         return
 
-    def show():
+    def show(self):
         return
 
