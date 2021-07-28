@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from lib.Misc import *
+from lib.misc import *
 #from lib import constant;
 import time;
 

@@ -2,9 +2,9 @@
 #New python script generation
 
 import time
-from lib.Events import *
-from lib.Rectangle import *
-from lib.Colors import *
+from lib.events import *
+from lib.rectangle import *
+from lib.colors import *
 
 r6 = Rectangle(Point(20,40),Point(60,80),box = HEAVY, border_color = LWHITE+BCYAN, color = WHITE+BRED, motif = "\N{DARK SHADE}");
 def on_activate_page_up():

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from lib.Rectangle import *
-from lib.Screen import *
+from lib.rectangle import *
+from lib.screen import *
 
 r = Rectangle(3,3,12,20,has_border = True, border_motif = 'Z', border_color = BLUE )
 

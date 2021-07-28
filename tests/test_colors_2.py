@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from lib.Colors import *
+from lib.colors import *
 
 c = Color()
 

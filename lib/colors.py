@@ -1,4 +1,4 @@
-from lib.Misc import *
+from lib.misc import *
 from lib import constant
 
 BLACK = 0

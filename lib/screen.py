@@ -1,5 +1,5 @@
 
-from lib.Misc import *
+from lib.misc import *
 import sys
 
 LINE      = 0b0000000000000001

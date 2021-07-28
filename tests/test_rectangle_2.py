@@ -2,9 +2,9 @@
 
 import time
 
-from lib.Rectangle import *
-from lib.Colors import *
-from lib.Screen import *
+from lib.rectangle import *
+from lib.colors import *
+from lib.screen import *
 
 r = Rectangle(1,1,18,10,border_color = LWHITE+BRED, color = WHITE+BBLUE)
 r.draw()
@@ -21,7 +21,9 @@ r4.draw()
 r5 = Rectangle(Point(120,40),Point(160,80),box = DOUBLE, border_color = LWHITE+BBLUE, color = LWHITE+BGREEN);
 r5.draw()
  
-r6 = Rectangle(Point(20,40),Point(60,80),box = HEAVY, border_color = LWHITE+BCYAN, color = WHITE+BRED, motif = "\N{DARK SHADE}");
+#r6 = Rectangle(Point(20,40),Point(60,80),box = HEAVY, border_color = LWHITE+BCYAN, color = WHITE+BRED,is_void = True, motif = "\N{DARK SHADE}");
+r6 = Rectangle(Point(20,40),Point(60,80),box = HEAVY, border_color = LWHITE+BCYAN,is_void = True);
 r6.draw()
+
  
 time.sleep(4)

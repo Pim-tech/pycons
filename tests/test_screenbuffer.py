@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from lib.Screen import *
+from lib.screen import *
 
 scrn = ScreenBuffer()
 

@@ -1,7 +1,7 @@
 
-from lib.Screen import *
+from lib.screen import *
 import lib.constant
-from lib.Misc import *
+from lib.misc import *
 
 
 class Line:

@@ -1,7 +1,7 @@
 
-from lib.Misc import * 
-from lib.Colors import *
-from lib.Screen import *
+from lib.misc import * 
+from lib.colors import *
+from lib.screen import *
 import sys
 
 
@@ -36,6 +36,7 @@ class Rectangle:
         self.vlen = None
         self.a = None
         self.b = None
+        self.is_void = False
 
         self.boxes = [
         [
@@ -121,6 +122,10 @@ class Rectangle:
                     if not isinstance(kws[name],bool):
                         raise TypeError("has_border must be a boolean.")
                     self.has_border = kws[name]
+                elif name == 'is_void':
+                    if not isinstance(kws[name],bool):
+                        raise TypeError("is_void must be a boolean.")
+                    self.is_void = kws[name]
                 elif name == 'border_motif':
                     if not isinstance(kws[name],str):
                         raise TypeError("border_motif must be type str")
@@ -194,6 +199,8 @@ class Rectangle:
 
         if self.has_border or self.hasbox :
             print(s)
+            if self.is_void:
+                return
             gotoxy(self.xpos + 1, self.ypos + 1)
             hlen -= 2
             vlen -= 2

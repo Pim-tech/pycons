@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from lib.Colors import *
+from lib.colors import *
 print(BROWN)
 
 MONMASQ = 0b00001111

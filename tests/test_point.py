@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from lib.Screen import *
+from lib.screen import *
 p = Point(222,333,flagconst = 'CLOSED')
 p2 = Point((444,555))
 p2.show()
