@@ -3,7 +3,13 @@ from lib.rectangle import *
 class Message(Rectangle):
 
     def __init__(self,*args,**kws):
+        self.textcolor = None
+        self.c256 = False
         self.message = kws.pop('message') 
+        if 'textcolor' in kws.keys():
+            self.textcolor = kws.pop('textcolor')
+        if 'c256' in kws.keys():
+            self.c256 = kws.pop('c256') 
         if not 'hlen' in  kws.keys():
             lines,cols = getTerminalSize()
             kws['hlen'] = int(cols//6.32)
@@ -20,8 +26,21 @@ class Message(Rectangle):
 
 
     def draw(self):
-        gotoxy(self.xpos_text,self.ypos_text)
-        print(self.message,end='')
         super().draw()
+        gotoxy(self.xpos_text,self.ypos_text)
+        if self.textcolor is not None:
+            if self.c256:
+                if isinstance(self.textcolor,int):
+                    Color().print256c(self.message,self.textcolor)
+                elif isinstance(self.textcolor,dict):
+                    bg = self.textcolor['bg']
+                    fg = self.textcolor['fg']
+                    Color().print256bf(self.message,fg,bg)
+            else:
+                #print('PASSS')
+                assert isinstance(self.textcolor,int), True 
+                Color().print(self.message,self.textcolor)
+        else:
+            print(self.message,flush=True,end='')
 
 
