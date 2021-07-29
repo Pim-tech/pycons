@@ -183,6 +183,8 @@ class Color:
     def _(self,rstr = False) -> str:
         prnt=(lambda a: a) if rstr else (lambda a: print(a,end='',flush=True))
         self.current_li = False;
+        self.current_bgcolor_256=0
+        self.current_color_256=0
         return prnt(chr(27) + "[0m")
 
 
