@@ -21,7 +21,7 @@ from lib.message import *
 #r2.draw()
 
 nocursor()
-m1 = Message(message = 'Attention!',textcolor = {'fg':11,'bg': 20} ,c256 = True,confirm={'m':'YESS','fg': 11,'bg':20})
+m1 = Message(message = 'Attention',textcolor = {'fg':11,'bg': 20} ,c256 = True,confirm={'m':'YESS','fg': 11,'bg':20})
 
 m1.draw()
 time.sleep(3)
