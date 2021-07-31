@@ -36,6 +36,7 @@ class Rectangle:
         self.a = self.b = None
         self.is_void = False
         self.xpos = self.ypos = None
+        self.parent = None
 
         self.boxes = [
         [
@@ -148,6 +149,10 @@ class Rectangle:
                         raise TypeError("box must be an integer.")
                     self.hasbox = True
                     self.box = kws[name] - 1
+                elif name == 'parent':
+                    if not isinstance(kws[name],Rectangle):
+                        raise TypeError("parent box must be of type class Rectangle.")
+                    self.parent =kws[name]
                 else:
                     raise ValueError("unknow named parameter: '" + name + "' given.")
 
@@ -162,12 +167,29 @@ class Rectangle:
             raise
         except:
             raise
-        if self.xpos is None:
-            lines,cols = getTerminalSize() 
-            self.xpos = cols//2 - self.hlen//2
-        if  self.ypos is None:
+
+        lines,cols = None,None
+        addx,addy = 0,0 
+        if self.parent is None:
             lines,cols = getTerminalSize()
+        else :
+            lines,cols = self.parent.vlen,self.parent.hlen
+            addx,addy=self.parent.xpos,self.parent.ypos
+        assert isinstance(lines,int),True
+        assert isinstance(cols,int),True
+
+        if self.hlen is None:
+            self.hlen = cols
+        if self.vlen is None:
+            self.vlen = lines
+        if self.xpos is None:
+            self.xpos = cols//2 - self.hlen//2
+        if self.ypos is None:
             self.ypos  = lines//2 - self.vlen//2 
+        
+        self.xpos += addx
+        self.ypos += addy
+
 
     def properties(self):
         print('xpos:',self.xpos)
@@ -184,6 +206,15 @@ class Rectangle:
     def getproperties():
         pass
 
+    def set_parent(self,parent):
+        assert isinstance(parent,Rectangle),True
+        assert isinstance(parent.hlen,int),True
+        assert isinstance(parent.vlen,int),True
+        assert isinstance(parent.xpos,int),True
+        assert isinstance(parent.ypos,int),True
+        self.parent = parent
+        self.xpos += parent.xpos 
+        self.ypos += parent.ypos
 
     def draw(self):
         gotoxy(self.xpos ,self.ypos )
