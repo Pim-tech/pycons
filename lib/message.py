@@ -25,19 +25,26 @@ class Message(Rectangle):
         if not 'motif' in kws.keys():
             kws['is_void'] = True
         super(Message,self).__init__(*args,**kws)
+        self._write_inside_and_confirm()
+
+    def _write_inside_and_confirm(self):
         if self.confirm is None:
-            self.xpos_text = self.xpos + int(self.hlen // 2) - int(len(self.message)//2)
-            self.ypos_text = self.ypos + int(self.vlen // 2) 
+            self.xpos_message = self.xpos + int(self.hlen // 2) - int(len(self.message)//2)
+            self.ypos_message = self.ypos + int(self.vlen // 2) 
         else:
-            self.xpos_text = self.xpos + int(self.hlen // 2) - int(len(self.message)//2)
-            self.ypos_text = self.ypos + int(self.vlen // 2) - 1
+            self.xpos_message = self.xpos + int(self.hlen // 2) - int(len(self.message)//2)
+            self.ypos_message = self.ypos + int(self.vlen // 2) - 1
             self.xpos_confirm = self.xpos + int(self.hlen // 2) - int(len(self.confirm)//2)
             self.ypos_confirm = self.ypos+self.vlen - 2
 
 
+    def set_parent(self,parent):
+        super().set_parent(parent)
+        self._write_inside_and_confirm()
+
     def draw(self):
         super().draw()
-        gotoxy(self.xpos_text,self.ypos_text)
+        gotoxy(self.xpos_message,self.ypos_message)
         color = Color()
         if self.textcolor is not None:
             if self.c256:

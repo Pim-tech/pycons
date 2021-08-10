@@ -1,0 +1,25 @@
+{
+  "configurations": {
+    "<name>: Launch": {
+      "adapter": "debugpy",
+      "breakpoints": {
+	      "exception": {
+		      "raised": "N",
+		      "caught": "N",
+		      "uncaught": "N"
+	      }
+      },
+      "configuration": {
+        "name": "<name>: Launch",
+        "type": "python",
+        "request": "launch",
+        "cwd": "~/pycons",
+        "python": "/usr/bin/python3",
+        "stopOnEntry": true,
+        "console": "integratedTerminal",
+        "debugOptions": [],
+        "program": "${file}"
+      }
+    }
+  }
+}

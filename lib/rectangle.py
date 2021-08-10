@@ -15,11 +15,17 @@ DWNRIGHT = 5
 SIMPLE = 1
 DOUBLE = 2
 HEAVY  = 3
+LIGHTARC = 4
 
 class Border:
     def __init__(self):
         self.motif = 'x'
         self.color = WHITE+BBLACK
+#[╭]  U+256D   &#9581;  BOX DRAWINGS LIGHT ARC DOWN AND RIGHT
+#[╮]  U+256E   &#9582;  BOX DRAWINGS LIGHT ARC DOWN AND LEFT
+#[╯]  U+256F   &#9583;  BOX DRAWINGS LIGHT ARC UP AND LEFT
+#[╰]  U+2570   &#9584;  BOX DRAWINGS LIGHT ARC UP AND RIGHT
+
 
 class Rectangle:
     def __init__(self,*args,**kws):
@@ -36,6 +42,7 @@ class Rectangle:
         self.a = self.b = None
         self.is_void = False
         self.xpos = self.ypos = None
+        self.oxpos= self.oypos = None
         self.parent = None
 
         self.boxes = [
@@ -62,7 +69,16 @@ class Rectangle:
         "\N{BOX DRAWINGS HEAVY DOWN AND LEFT}",
         "\N{BOX DRAWINGS HEAVY UP AND RIGHT}",
         "\N{BOX DRAWINGS HEAVY UP AND LEFT}"
-        ]
+        ],
+        [
+        "\N{BOX DRAWINGS LIGHT HORIZONTAL}",
+        "\N{BOX DRAWINGS LIGHT VERTICAL}" ,
+        "\N{BOX DRAWINGS LIGHT ARC DOWN AND RIGHT}",
+        "\N{BOX DRAWINGS LIGHT ARC DOWN AND LEFT}",
+        "\N{BOX DRAWINGS LIGHT ARC UP AND RIGHT}",
+        "\N{BOX DRAWINGS LIGHT ARC UP AND LEFT}"
+        ],
+
         ]
         
         try:
@@ -187,8 +203,12 @@ class Rectangle:
         if self.ypos is None:
             self.ypos  = lines//2 - self.vlen//2 
         
-        self.xpos += addx
-        self.ypos += addy
+        self.oxpos = self.xpos
+        self.oypos = self.ypos
+        if addx > 0:
+            self.xpos += addx
+        if addy > 0:
+            self.ypos += addy
 
 
     def properties(self):
@@ -212,9 +232,22 @@ class Rectangle:
         assert isinstance(parent.vlen,int),True
         assert isinstance(parent.xpos,int),True
         assert isinstance(parent.ypos,int),True
+        
+        lines,cols = parent.vlen,parent.hlen
         self.parent = parent
-        self.xpos += parent.xpos 
-        self.ypos += parent.ypos
+
+        if self.hlen is None:
+            self.hlen = cols
+        if self.vlen is None:
+            self.vlen = lines
+        if self.xpos is None:
+            self.xpos = cols//2 - self.hlen//2
+        if self.ypos is None:
+            self.ypos  = lines//2 - self.vlen//2 
+
+
+        self.xpos =  parent.xpos + int( (cols/2) - (self.hlen / 2) ) 
+        self.ypos =  parent.ypos + int( (lines/2) - (self.vlen / 2) )
 
     def draw(self):
         gotoxy(self.xpos ,self.ypos )
