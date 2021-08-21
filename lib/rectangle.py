@@ -21,6 +21,7 @@ class Border:
     def __init__(self):
         self.motif = 'x'
         self.color = WHITE+BBLACK
+
 #[╭]  U+256D   &#9581;  BOX DRAWINGS LIGHT ARC DOWN AND RIGHT
 #[╮]  U+256E   &#9582;  BOX DRAWINGS LIGHT ARC DOWN AND LEFT
 #[╯]  U+256F   &#9583;  BOX DRAWINGS LIGHT ARC UP AND LEFT
@@ -81,6 +82,7 @@ class Rectangle:
 
         ]
         
+        self.color_instance = Color()
         try:
             for n in range(0,len(args)):
                 if isinstance(args[n],Point):
@@ -109,6 +111,7 @@ class Rectangle:
             elif len(self.coords_color) == 5:
                     self.xpos,self.ypos,self.hlen,self.vlen,self.color = self.coords_color
 
+            foreground = background = {} 
             for name in kws:
                 if name == 'xpos':
                     if not isinstance(kws[name],int):
@@ -127,9 +130,39 @@ class Rectangle:
                         raise TypeError("vlen must be an integer.")
                     self.vlen = kws[name]
                 elif name == 'color':
-                    if not isinstance(kws[name],int):
-                        raise TypeError("color must be an integer.")
-                    self.color = kws[name]
+                    fg = {}
+                    bg = {}
+                    themode=0
+                    if isinstance(kws[name],int):
+                        self.color = self.color_instance.sequence8(kws[name],True)
+                    elif isinstance(kws[name],dict):
+                        if 'fg' in kws[name].keys():
+                            foreground = kws[name]['fg']
+                        if 'bg' in kws[name].keys():
+                            background = kws[name]['bg']
+                        if 'mode' in kws[name].keys():
+                            themode = kws[name]['mode']
+                    if isinstance(foreground, int) and isinstance(background,int):
+                        self.color = self.color_instance.sequence256bf(foreground,background,True)
+                    elif isinstance(foreground,int):
+                        self.color = self.color_instance.sequence256bf(foreground,None,True)
+                    elif isinstance(background,int):
+                        self.color = self.color_instance.sequence256bf(None,background,True)
+                    elif isinstance(foreground, tuple) and len(foreground) > 0  and isinstance(background,tuple) and len(background) > 0:
+                    #elif isinstance(foreground, tuple) and isinstance(background,tuple): 
+                        
+                        fg['r'],fg['v'],fg['b'] = foreground
+                        bg['r'],bg['v'],bg['b'] = background
+
+                        self.color = self.color_instance.sequencervb(fg,bg,True,mode=themode)
+                    elif isinstance(foreground, tuple) and foreground == True:
+                        fg['r'],fg['v'],fg['b'] = foreground
+                        bg = {}
+                        self.color = self.color_instance.sequencervb(fg,bg,True,mode=themode)
+                    elif isinstance(background, tuple) and background == True:
+                        fg = {}
+                        bg['r'],fg['v'],fg['b'] = backround
+                        self.color = self.color_instance.sequencervb(fg,bg,True)
                 elif name == 'motif':
                     if not isinstance(kws[name],str):
                         raise TypeError("motif must be type str")
@@ -281,12 +314,13 @@ class Rectangle:
             ypos += 1
 
         line = self.motif * hlen
-        bc = Color()
-        bc_color = bc.sequence8(self.color,True)
-        bloc = bc_color + line
+        #bc = Color()
+        #bc_color = bc.sequence8(self.color,True)
+        #print('color:',self.color)
+        bloc = self.color + line
         for n in range(1,vlen):
             bloc += (gotoxy(xpos,ypos + n,True) + line)
-        bloc += bc._(True)
+        bloc += self.color_instance._(True)
         print(bloc)
 
     def hide(self):

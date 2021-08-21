@@ -21,10 +21,10 @@ class KbEvents:
         
         signal.signal(signal.SIGINT,self.signal_handler)
 
-        if self.withthreads == False:
-            self.wait_key(None,None)
-        else:
+        if self.withthreads:
             self.run_threads()
+        else:
+            self.wait_key(None,None)
 
 
     @contextlib.contextmanager

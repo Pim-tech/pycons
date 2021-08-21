@@ -80,6 +80,8 @@ class Color:
         self.current_color_256 = 0
         self.current_bgcolor_256 = 0
         self.format = None
+        self.current_truecolor_fg = None
+        self.current_truecolor_bg = None
 
     def sequence8(self,attr: int, rstr=False, mode=None) -> str:
         prnt=(lambda a: a) if rstr else (lambda a: print(a,end=''))
@@ -123,16 +125,39 @@ class Color:
                 return chaine + ( ' ' * (width - len(chaine)))
         return chaine
     
-    def sequence256bf(self,color: int,bgcolor: int,rstr=False):
+    def sequence256bf(self,color: int,bgcolor: int,rstr=False,mode = None):
         seq = []
         prnt=(lambda a: a) if rstr else (lambda a: print(a,end='',flush=True))
-        if color != self.current_color_256:
+        if color and color != self.current_color_256:
             seq.extend(['38','5',str(color)])
-        if bgcolor != self.current_bgcolor_256:
+        if bgcolor and bgcolor != self.current_bgcolor_256:
             seq.extend(['48','5',str(bgcolor)])
         self.current_color_256 = color
         self.current_bgcolor_256 = bgcolor
         seqstr = constant.STARTSEQ + ';'.join(seq) + 'm'
+        return prnt(seqstr)
+
+    def sequencervb(self,fg: dict = None ,bg: dict = None,rstr=False,mode = None):
+        seq = []
+        prnt= (lambda a: a) if rstr else (lambda a: print(a,end='',flush=True))
+        if  mode is not None and mode != self.current_mode:
+            seq.append(str(mode))
+        if fg is not None and fg != self.current_truecolor_fg:
+            fr,fv,fb = fg['r'],fg['v'],fg['b']
+            seq.extend(['38','2',str(fr),str(fv),str(fb)])
+        if bg is not None and bg != self.current_truecolor_bg:
+            br,bv,bb = bg['r'],bg['v'],bg['b']
+            seq.extend(['48','2',str(br),str(bv),str(bb)])
+
+        self.current_truecolor_fg = fg
+        self.current_truecolor_bg = bg
+        if mode is not None:
+            self.current_mode = mode
+       
+        seqstr = ''
+        if len(seq) > 0:
+            seqstr = constant.STARTSEQ + ';'.join(seq) + 'm'
+        #seqstr = '[' + ';'.join(seq) + 'm'
         return prnt(seqstr)
 
     def sequence256c(self,attr: int,rstr=False):
@@ -147,6 +172,14 @@ class Color:
         if reset:
             chaine = (chaine + self._(True))
         return prnt(chaine)
+
+    def printrvb(self,s,fg: dict,bg: dict,mode=None,rstr=False,reset=True,fixed_width=0,spacing=0):
+        prnt=(lambda a: a) if rstr else (lambda a: print(a,end='',flush=True))
+        chaine = self.sequencervb(fg,bg,True,mode)
+        chaine += (self.fixed_width(s,fixed_width,spacing)) if (fixed_width > 0) or (spacing > 0) else s
+        if reset:
+            chaine = (chaine + self._(True))
+        return prnt(chaine)    
     
     def print256c(self,s,color,rstr=False,reset=True,fixed_width=0,spacing=0):
         prnt=(lambda a: a) if rstr else (lambda a: print(a,end='',flush=True))
@@ -169,7 +202,12 @@ class Color:
         prnt=(lambda a: a) if rstr else (lambda a: print(a,end='',flush=True))
         chaine = self.print(s,attr,mode,True,reset,fixed_width,spacing) + "\n"
         return prnt(chaine)
-    
+
+    def sayrvb(self,s,fg: dict,bg: dict,rstr=False,reset=True,fixed_width=0,spacing=0,mode=None):
+        prnt=(lambda a: a) if rstr else (lambda a: print(a,end='',flush=True))
+        chaine = self.printrvb(s,fg,bg,mode,True,reset,fixed_width,spacing) + "\n"
+        return prnt(chaine)
+        
     def say256c(self,s,attr,rstr=False,reset=True,fixed_width=0,spacing=0,mode=None):
         prnt=(lambda a: a) if rstr else (lambda a: print(a,end='',flush=True))
         chaine = self.print256c(s,attr,True,reset,fixed_width,spacing) + "\n"
@@ -185,6 +223,9 @@ class Color:
         self.current_li = False;
         self.current_bgcolor_256=0
         self.current_color_256=0
+        self.current_truecolor_fg = {'r':0,'v':0,'b': 0}
+        self.current_truecolor_bg = {'r':0,'v':0,'b': 0}
+        self.current_mode = 0
         return prnt(chr(27) + "[0m")
 
 

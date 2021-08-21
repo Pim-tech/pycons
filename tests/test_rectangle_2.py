@@ -6,10 +6,11 @@ from lib.rectangle import *
 from lib.colors import *
 from lib.screen import *
 
-r = Rectangle(1,1,18,10,border_color = LWHITE+BRED, color = WHITE+BBLUE)
+clear_screen()
+r = Rectangle(1,1,18,10,border_color = LWHITE+BRED, color = {'bg': ( 100 ,100,100), 'fg': (0,0,255)})
 r.draw()
 
-r2 = Rectangle(xpos = 100, ypos =1,hlen = 4, vlen = 4, color = LWHITE+BCYAN)
+r2 = Rectangle(xpos = 100, ypos =1,hlen = 4, vlen = 4, color = {'bg':129 ,'fg':1112})
 r2.draw()
  
 r3 = Rectangle(100,20,10,10,box = SIMPLE, border_color = LWHITE+BCYAN, color = LWHITE+BBLUE);

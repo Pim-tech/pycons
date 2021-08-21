@@ -8,7 +8,8 @@ class YesNo(Rectangle):
         self.textcolor = None
         self.yes = 'Yes'
         self.no  = 'No'
-        self.c256 = False
+        self.attr_yes = LWHITE + BRED
+        self.attr_no  = LWHITE + BBLUE
         self.ypos_yes =  self.xpos_yes = None
         self.ypos_no =  self.xpos_no = None
         self.message = kws.pop('message') 
@@ -20,6 +21,10 @@ class YesNo(Rectangle):
             self.yes = kws.pop('yes') 
         if 'no' in kws.keys():
             self.no = kws.pop('no') 
+        if 'attryes' in kws.keys():
+            self.attr_yes = kws.pop('attryes')
+        if 'attrno' in kws.keys():
+            self.attr_yes = kws.pop('attrno')
         if not 'hlen' in  kws.keys():
             lines,cols = getTerminalSize()
             kws['hlen'] = int(cols//6.32)
@@ -40,15 +45,16 @@ class YesNo(Rectangle):
         else:
             self.xpos_message = self.xpos + int(self.hlen // 2) - int(len(self.message)//2)
             self.ypos_message = self.ypos + int(self.vlen // 2) - 1
-            self.xpos_yes = self.xpos + int(self.hlen // 2) - int(len(self.confirm)//2)
+            self.xpos_yes = self.xpos + int(self.hlen // 4) - int(len(self.yes//2))
             self.ypos_yes = self.ypos+self.vlen - 2
-            self.xpos_no =
-            self.ypos_no =
-
+            self.xpos_no = int(self.xpos + self.hlen  - (self.hlen //4) + len(self.no//2))
+            self.ypos_no = self.ypos+self.vlen - 2
+            
 
     def set_parent(self,parent):
         super().set_parent(parent)
         self._write_inside_and_yesno()
+
 
     def draw(self):
         super().draw()
@@ -67,23 +73,15 @@ class YesNo(Rectangle):
                 color.print(self.message,self.textcolor)
         else:
             print(self.message,flush=True,end='')
-
-        gotoxy(self.xpos_confirm,self.ypos_confirm)
-        if self.confirm:
-            if isinstance(self.confirm,str):
-                assert isinstance(self.xpos_confirm,int),True
-                assert isinstance(self.ypos_confirm,int),True
-                color.print(self.confirm,LWHITE+BRED)
-            elif  isinstance(self.confirm,dict):
-                if 'm' in self.confirm.keys():
-                    assert isinstance(self.confirm['m'],str),True
-                    if 'color' in self.confirm.keys():
-                        assert isinstance(self.confirm['color'],int),True
-                        color.print256c(self.confirm['m'],self.confirm['color'])
-                    elif 'bg' in self.confirm.keys() and 'fg' in self.confirm.keys():
-                        color.print256bf(self.confirm['m'],self.confirm['fg'],self.confirm['bg'])
-
+        
+        if self.c256:
+            gotoxy(self.xpos_yes,self.ypos_yes)
+            color.print256c(self.yes,self.attr_yes)
+            gotoxy(self.xpos_no,self.ypos_no)
+            color.print256c(self.no,self.attr_no)
+        else:
+            gotoxy(self.xpos_yes,self.ypos_yes)
+            color.print(self.yes,self.attr_yes)
+            gotoxy(self.xpos_no,self.ypos_no)
+            color.print(self.no,self.attr_no)
             
-
-
-
