@@ -31,11 +31,9 @@ class Border:
 class Rectangle:
     def __init__(self,*args,**kws):
         self.motif = '*'
-        self.color = WHITE+BBLACK
         self.has_border = False
         self.hasbox = False
         self.border_motif = '+'
-        self.border_color = WHITE+BBLACK
         self.box = 0
         self.points = []
         self.coords_color = []
@@ -83,6 +81,8 @@ class Rectangle:
         ]
         
         self.color_instance = Color()
+        self.color = self.color_instance.sequence8(WHITE+BBLACK,True)
+        self.border_color = WHITE+BBLACK
         try:
             for n in range(0,len(args)):
                 if isinstance(args[n],Point):
@@ -96,7 +96,7 @@ class Rectangle:
                 if len(self.coords_color) > 1:
                     raise ValueError('You may not give coords integers and points')
                 elif len(self.coords_color) == 1:
-                    self.color = self.coords_color[0]
+                    self.color = self.color_instance.sequence8(self.coords_color[0],True)
 
                 self.a,self.b = self.points
                 self.xpos,self.ypos = self.a.x,self.a.y
@@ -109,8 +109,8 @@ class Rectangle:
             elif len(self.coords_color) == 4:
                 self.xpos,self.ypos,self.hlen,self.vlen = self.coords_color
             elif len(self.coords_color) == 5:
-                    self.xpos,self.ypos,self.hlen,self.vlen,self.color = self.coords_color
-
+                self.xpos,self.ypos,self.hlen,self.vlen = self.coords_color[:-1]
+                self.color = self.coords_color[-1]
             foreground = background = {} 
             for name in kws:
                 if name == 'xpos':
@@ -304,7 +304,7 @@ class Rectangle:
             s = (b_color + h_border_top + v_border_right + gotoxy(self.xpos,self.ypos + 1,True) + v_border_left + h_border_bottom + c._(True))
 
         if self.has_border or self.hasbox :
-            print(s)
+            print(s,end='')
             if self.is_void:
                 return
             gotoxy(self.xpos + 1, self.ypos + 1)
@@ -317,11 +317,12 @@ class Rectangle:
         #bc = Color()
         #bc_color = bc.sequence8(self.color,True)
         #print('color:',self.color)
+
         bloc = self.color + line
         for n in range(1,vlen):
             bloc += (gotoxy(xpos,ypos + n,True) + line)
         bloc += self.color_instance._(True)
-        print(bloc)
+        print(bloc,end='',flush=True)
 
     def hide(self):
         return
