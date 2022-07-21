@@ -22,7 +22,7 @@ r2.draw()
 
 m1 = Message(message = 'CONFIRMEZ-MOI CA',textcolor = {'fg': (255,255,0),'bg':( 0,0,0),'mode':5} , motif="\N{DARK SHADE}",confirm='VAS-Y!', confirm_color = {'fg': (255,0,0),'bg': (0,255,0),'mode': 1})
 
-m1.set_parent(r2)
+m1.set_parent(r)
 
 m1.draw()
 time.sleep(3)

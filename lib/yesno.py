@@ -13,6 +13,14 @@ class YesNo(Rectangle):
         self.ypos_yes =  self.xpos_yes = None
         self.ypos_no =  self.xpos_no = None
         self.message = kws.pop('message') 
+        self.confirm = None
+        self.parent = None
+        self.c256   = None
+        self.textcolor = None
+        self.hlen = None
+        self.vlen = None
+        lines, cols = None,None
+
         if 'textcolor' in kws.keys():
             self.textcolor = kws.pop('textcolor')
         if 'c256' in kws.keys():
@@ -25,9 +33,20 @@ class YesNo(Rectangle):
             self.attr_yes = kws.pop('attryes')
         if 'attrno' in kws.keys():
             self.attr_yes = kws.pop('attrno')
-        if not 'hlen' in  kws.keys():
+        if not 'hlen' in  kws.keys() or not 'vlen' in kws.keys():
             lines,cols = getTerminalSize()
-            kws['hlen'] = int(cols//6.32)
+            if not 'hlen' in kws.keys():
+                self.hlen = int(cols//6.32)
+            else:
+                self.hlen = kws.pop('hlen')
+
+            if not 'vlen' in kws.keys():
+                self.vlen = int(lines//7)
+            else:
+                self.vlen = kws.pop('vlen')
+        else:
+            self.hlen = kws.pop('hlen')
+            self.vlen = kws.pop('vlen')
         if not 'vlen' in kws.keys():
             lines,cols = getTerminalSize()
             kws['vlen'] = int(lines//7)
@@ -35,29 +54,30 @@ class YesNo(Rectangle):
             kws['box'] = SIMPLE
         if not 'motif' in kws.keys():
             kws['is_void'] = True
-        super(Message,self).__init__(*args,**kws)
-        self._write_inside_and_yesno()
+        
+        #super(Message,self).__init__(*args,**kws)
+        #self._write_inside_and_yesno()
 
     def _write_inside_and_yesno(self):
-        if self.confirm is None:
-            self.xpos_message = self.xpos + int(self.hlen // 2) - int(len(self.message)//2)
-            self.ypos_message = self.ypos + int(self.vlen // 2) 
-        else:
-            self.xpos_message = self.xpos + int(self.hlen // 2) - int(len(self.message)//2)
-            self.ypos_message = self.ypos + int(self.vlen // 2) - 1
-            self.xpos_yes = self.xpos + int(self.hlen // 4) - int(len(self.yes//2))
-            self.ypos_yes = self.ypos+self.vlen - 2
-            self.xpos_no = int(self.xpos + self.hlen  - (self.hlen //4) + len(self.no//2))
-            self.ypos_no = self.ypos+self.vlen - 2
+#        if self.confirm is None:
+#            self.xpos_message = self.parent.xpos + int(self.parent.hlen // 2) - int(len(self.message)//2)
+#            self.ypos_message = self.parent.ypos + int(self.parent.vlen // 2) 
+#        else:
+            self.xpos_message = self.parent.xpos + int(self.hlen // 2) - int(len(self.message)//2)
+            self.ypos_message = self.parent.ypos + int(self.vlen // 2) - 1
+            self.xpos_yes = self.parent.xpos + int(self.hlen // 4) - int(len(self.yes)//2)
+            self.ypos_yes = self.parent.ypos+self.vlen - 2
+            self.xpos_no = int(self.parent.xpos + self.hlen  - (self.hlen //4) + len(self.no)//2)
+            self.ypos_no = self.parent.ypos + self.vlen - 2
             
 
     def set_parent(self,parent):
-        super().set_parent(parent)
+        self.parent=parent
         self._write_inside_and_yesno()
 
 
     def draw(self):
-        super().draw()
+        #super().draw()
         gotoxy(self.xpos_message,self.ypos_message)
         color = Color()
         if self.textcolor is not None:
