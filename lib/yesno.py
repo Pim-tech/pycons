@@ -16,6 +16,7 @@ class YesNo(Rectangle):
         self.confirm = None
         self.c256   = None
         self.textcolor = None
+        self.gap_yesno = 2
 
 
         if 'textcolor' in kws.keys():
@@ -30,6 +31,8 @@ class YesNo(Rectangle):
             self.attr_yes = kws.pop('attryes')
         if 'attrno' in kws.keys():
             self.attr_yes = kws.pop('attrno')
+        if 'gap_yesno' in kws.keys():
+            self.gap_yesno = kws.pop('gap_yesno')
         if not 'box' in kws.keys():
             kws['box'] = SIMPLE
         if not 'motif' in kws.keys():
@@ -56,8 +59,23 @@ class YesNo(Rectangle):
                 kws['xpos'] = int(kws['parent'].vlen//2 - kws['vlen'] //2)
             
         super(YesNo,self).__init__(*args,**kws)
-        self.xpos_message = (self.xpos + (self.hlen//2) - (len(self.message)//2))
-        self.ypos_message = 
+        try:
+            len_msg = len(self.message)
+            self.xpos_message = int(self.xpos + (self.hlen//2) - len_msg//2)
+            self.ypos_message = int(self.ypos + (self.vlen//2) - (self.vlen//5) )
+            if len_msg > (self.hlen - 3):
+                raise ValueError("Message does not fit into window!")
+            self.ypos_yes = self.ypos_no = self.ypos + self.vlen - 3
+            if (self.ypos_yes ) > ((self.ypos + self.vlen) - 2):
+                raise ValueError("Box not high enought to contain message and yesno buttons!")
+            self.xpos_yes = self.xpos + self.gap_yesno 
+            self.xpos_no  = self.xpos + self.hlen  - ( self.gap_yesno + len(self.no))
+
+        except TypeError as  te:
+            raise
+        except ValueError as ve:
+            raise
+        
         
     def set_parent(self,parent):
         self.parent=parent
@@ -66,7 +84,6 @@ class YesNo(Rectangle):
 
     def draw(self):
         super().draw()
-        return
         gotoxy(self.xpos_message,self.ypos_message)
         color = Color()
         if self.textcolor is not None:
