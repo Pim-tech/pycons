@@ -163,6 +163,7 @@ class Color:
     def sequence256c(self,attr: int,rstr=False):
         color = attr & COLOR_256_MASQ
         bgcolor = (attr & BGND_256_MASQ) >> 8
+        #print(color,bgcolor)
         return self.sequence256bf(color,bgcolor,rstr)
 
     def print(self,s,attr,mode=None,rstr=False,reset=True,fixed_width=0,spacing=0):

@@ -20,9 +20,9 @@ r2 = Rectangle(Point(130,3), Point(290,80),LRED, border_color = LGREEN, box = 1)
 #
 r2.draw()
 
-m1 = Message(message = 'CONFIRMEZ-MOI CA',textcolor = {'fg': (255,255,0),'bg':( 0,0,0),'mode':5} , motif="\N{DARK SHADE}",confirm='VAS-Y!', confirm_color = {'fg': (255,0,0),'bg': (0,255,0),'mode': 1})
+m1 = Message(message = 'CONFIRMEZ-MOI CA',textcolor = {'fg': (255,255,0),'bg':( 0,0,0),'mode':5} , motif="\N{DARK SHADE}",confirm='VAS-Y!', confirm_color = {'fg': (255,0,0),'bg': (0,255,0),'mode': 1},parent=r)
 
-m1.set_parent(r)
+#m1.set_parent(r)
 
 m1.draw()
 time.sleep(3)

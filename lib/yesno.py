@@ -14,7 +14,7 @@ class YesNo(Rectangle):
         self.ypos_no =  self.xpos_no = None
         self.message = kws.pop('message') 
         self.confirm = None
-        self.c256   = None
+        self.c256   = False
         self.textcolor = None
         self.gap_yesno = 2
 
@@ -30,7 +30,7 @@ class YesNo(Rectangle):
         if 'attryes' in kws.keys():
             self.attr_yes = kws.pop('attryes')
         if 'attrno' in kws.keys():
-            self.attr_yes = kws.pop('attrno')
+            self.attr_no = kws.pop('attrno')
         if 'gap_yesno' in kws.keys():
             self.gap_yesno = kws.pop('gap_yesno')
         if not 'box' in kws.keys():
@@ -76,11 +76,6 @@ class YesNo(Rectangle):
         except ValueError as ve:
             raise
         
-        
-    def set_parent(self,parent):
-        self.parent=parent
-        self._write_inside_and_yesno()
-
 
     def draw(self):
         super().draw()

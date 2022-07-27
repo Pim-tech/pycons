@@ -80,11 +80,13 @@ class Message(Rectangle):
         if not 'box' in kws.keys():
             kws['box'] = SIMPLE
         if not 'motif' in kws.keys():
-            kws['is_void'] = True
-        super(Message,self).__init__(*args,**kws)
-        self._write_inside_and_confirm()
+            kws['motif'] = ' '
 
-    def _write_inside_and_confirm(self):
+     
+        super(Message,self).__init__(*args,**kws)
+        if 'parent' in kws.keys():
+            super().set_parent(kws['parent'])
+
         if self.confirm is None:
             self.xpos_message = self.xpos + int(self.hlen // 2) - int(len(self.message)//2)
             self.ypos_message = self.ypos + int(self.vlen // 2) 
@@ -92,12 +94,8 @@ class Message(Rectangle):
             self.xpos_message = self.xpos + int(self.hlen // 2) - int(len(self.message)//2)
             self.ypos_message = self.ypos + int(self.vlen // 2) - 1
             self.xpos_confirm = self.xpos + int(self.hlen // 2) - int(len(self.confirm)//2)
-            self.ypos_confirm = self.ypos+self.vlen - 2
+            self.ypos_confirm = int(self.ypos+self.vlen - (self.vlen//3 + 1))
 
-
-    def set_parent(self,parent):
-        super().set_parent(parent)
-        self._write_inside_and_confirm()
 
     def draw(self):
         super().draw()
